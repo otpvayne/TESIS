@@ -16,7 +16,7 @@ env/
 
 # Environment variables
 .env
-
+.env.example
 # Alembic
 # (versions se versiona, pero no el cache)
 alembic/__pycache__/
