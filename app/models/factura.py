@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from sqlalchemy import Numeric, String, Text
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin
 
@@ -24,3 +24,7 @@ class Factura(Base, TimestampMixin):
     estado: Mapped[str] = mapped_column(String(50), nullable=False, default="pendiente")
     image_url: Mapped[str | None] = mapped_column(Text, nullable=True)
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="uploaded")
+
+    ocr_results: Mapped[list["OcrResult"]] = relationship(  # type: ignore[name-defined]
+        "OcrResult", back_populates="factura", cascade="all, delete-orphan"
+    )
