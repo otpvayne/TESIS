@@ -12,6 +12,11 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ENVIRONMENT: str = "development"
 
+    SUPABASE_URL: str
+    SUPABASE_KEY: str
+    SUPABASE_BUCKET: str = "facturas"
+    MAX_UPLOAD_SIZE_MB: int = 10
+
     @property
     def is_development(self) -> bool:
         return self.ENVIRONMENT == "development"

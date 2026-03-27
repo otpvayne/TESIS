@@ -16,9 +16,11 @@ class Factura(Base, TimestampMixin):
         primary_key=True,
         default=uuid.uuid4,
     )
-    numero: Mapped[str] = mapped_column(String(50), unique=True, nullable=False, index=True)
-    proveedor: Mapped[str] = mapped_column(String(255), nullable=False)
-    monto_total: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
+    numero: Mapped[str | None] = mapped_column(String(50), unique=True, nullable=True, index=True)
+    proveedor: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    monto_total: Mapped[Decimal | None] = mapped_column(Numeric(12, 2), nullable=True)
     moneda: Mapped[str] = mapped_column(String(3), nullable=False, default="PEN")
     descripcion: Mapped[str | None] = mapped_column(Text, nullable=True)
     estado: Mapped[str] = mapped_column(String(50), nullable=False, default="pendiente")
+    image_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    status: Mapped[str] = mapped_column(String(50), nullable=False, default="uploaded")
