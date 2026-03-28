@@ -27,10 +27,8 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="Facturas API",
     version="0.1.0",
-    # Swagger and ReDoc are only exposed in development.
-    # In production, disable them to avoid leaking schema information.
-    docs_url="/docs" if settings.is_development else None,
-    redoc_url="/redoc" if settings.is_development else None,
+    docs_url="/docs",
+    redoc_url="/redoc",
 )
 
 # ---------------------------------------------------------------------------
