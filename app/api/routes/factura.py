@@ -22,12 +22,14 @@ class FacturaCreate(BaseModel):
 
 class FacturaResponse(BaseModel):
     id: uuid.UUID
-    numero: str
-    proveedor: str
-    monto_total: Decimal
+    numero: str | None
+    proveedor: str | None
+    monto_total: Decimal | None
     moneda: str
     descripcion: str | None
     estado: str
+    status: str
+    image_url: str | None
 
     model_config = {"from_attributes": True}
 

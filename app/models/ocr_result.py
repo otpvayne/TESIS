@@ -1,6 +1,7 @@
 import uuid
+from datetime import datetime
 
-from sqlalchemy import Float, ForeignKey, String, Text
+from sqlalchemy import Boolean, DateTime, Float, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -22,21 +23,36 @@ class OcrResult(Base, TimestampMixin):
         index=True,
     )
 
-    # Raw output from the recognition stage (all lines joined by \n)
-    raw_text: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # --- OCR pipeline output (read-only after processing) ---
 
-    # Heuristically extracted fields
+    raw_text: Mapped[str | None] = mapped_column(Text, nullable=True)
     extracted_date: Mapped[str | None] = mapped_column(String(50), nullable=True)
     extracted_total: Mapped[str | None] = mapped_column(String(50), nullable=True)
     extracted_provider: Mapped[str | None] = mapped_column(String(255), nullable=True)
-
-    # Rough confidence score in [0, 1] based on how many fields were found
     confidence_estimate: Mapped[float | None] = mapped_column(Float, nullable=True)
-
-    # Human-readable notes produced by the pipeline (comma-separated)
     processing_notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Pipeline status: processing | processed | needs_review | failed
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="processing")
+
+    # --- Human validation fields ---
+
+    validated_provider: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    validated_date: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    validated_total: Mapped[str | None] = mapped_column(String(50), nullable=True)
+
+    # Who validated (free-form string: username, email, or "system")
+    validated_by: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    validated_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
+    # Optional notes added during human review
+    validation_notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    # True when at least one validated field differs from the extracted value
+    was_manually_edited: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False
+    )
 
     factura: Mapped["Factura"] = relationship("Factura", back_populates="ocr_results")  # type: ignore[name-defined]
