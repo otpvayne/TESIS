@@ -14,9 +14,8 @@ build/
 venv/
 env/
 
-# Environment variables
+# Environment variables — .env.example is committed; .env is secret
 .env
-.env.example
 # Alembic
 # (versions se versiona, pero no el cache)
 alembic/__pycache__/
