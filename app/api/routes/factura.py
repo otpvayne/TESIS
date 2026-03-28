@@ -8,6 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
 from app.models.factura import Factura
+from app.schemas.factura import FacturaDetail
+from app.services import query_service
 
 router = APIRouter(prefix="/facturas", tags=["facturas"])
 
@@ -55,16 +57,15 @@ async def crear_factura(
     return factura
 
 
-@router.get("/{factura_id}", response_model=FacturaResponse)
+@router.get("/{factura_id}", response_model=FacturaDetail)
 async def obtener_factura(
     factura_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
-) -> Factura:
-    result = await db.execute(select(Factura).where(Factura.id == factura_id))
-    factura = result.scalar_one_or_none()
-    if not factura:
+) -> FacturaDetail:
+    detail = await query_service.get_factura_detail(db, factura_id)
+    if detail is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Factura no encontrada",
         )
-    return factura
+    return detail
