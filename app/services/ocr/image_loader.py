@@ -17,13 +17,21 @@ logger = logging.getLogger(__name__)
 
 
 async def load_from_url(url: str) -> np.ndarray:
-    """Download an image from a URL and return it as an RGB NumPy array."""
+    """
+    Download an image from a URL and return it as an RGB NumPy array.
+
+    Raises:
+        RuntimeError: If download fails (HTTP error, network error, timeout).
+        ValueError: If the downloaded file is not a valid image.
+    """
     logger.debug("Downloading image from URL: %s", url)
     try:
         async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
             response = await client.get(url)
             response.raise_for_status()
         return _decode_bytes(response.content)
+    except httpx.TimeoutException as exc:
+        raise RuntimeError(f"Timeout al descargar imagen desde {url} (30s)") from exc
     except httpx.HTTPStatusError as exc:
         raise RuntimeError(
             f"HTTP {exc.response.status_code} al descargar imagen: {url}"

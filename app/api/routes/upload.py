@@ -52,7 +52,7 @@ async def upload_factura_image(
 
     factura = Factura(image_url=image_url, status="uploaded")
     db.add(factura)
-    await db.commit()
+    await db.flush()
     await db.refresh(factura)
 
     return UploadResponse(
